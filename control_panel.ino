@@ -13,6 +13,7 @@ int potLims[11][2] = {{500,510},{550,560},{600,610},{650,660},{700,710},{750,760
 
 /* Vars for button. */
 int buttonPin=3;
+boolean buttonState = false;
 
 /* Vars for serial comm. */
 String inputString = "";
@@ -25,6 +26,7 @@ void setup(){
   
   // setup reset button
   pinMode(buttonPin,INPUT);
+  buttonState = digitalRead(buttonPin);
   
   // setup led
   for(int i=0; i<3; i++){
@@ -45,6 +47,10 @@ void loop(){
   /* Check button. */
   int bVal = digitalRead(buttonPin);
   //Serial.println("Button state: " + (String)bVal); // Debug
+  if(bVal^buttonState){
+    Serial.println("Button state changed from: " + (String)buttonState + " -> " + (String)bval); //debug
+    buttonState = bVal;
+  }
   
   /* Check pot. */
   int potVal = analogRead(potPin);
