@@ -82,6 +82,7 @@ int getLevel(int p){
 /* Gets the nearest level to the pot value.
     This is useful when we need to have a nonzero level. */
 int getNearestLevel(int p){
+  int level;
   for(int i=0; i<11; i++){
     if(p<potLims[i][1]){
       level=i+1;
