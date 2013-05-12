@@ -53,6 +53,7 @@ void myReset(){
   int code = 0;
   while(code!=100){
     requestReset();
+    Serial.flush();
     char buf[3];
     Serial.readBytesUntil('\n',buf,3);
     code=atoi(buf);
@@ -133,7 +134,7 @@ int getNearestLevel(int p){
 /* Processes an input code. */
 void processIn(String rs){
   int code = str2Int(rs);
-  Serial.println("recieved code: " + String(code)); //debug
+  //Serial.println("recieved code: " + String(code)); //debug
   if(code==lastLR){
     currentLevel = lastLR;
     setColor(GREEN);
