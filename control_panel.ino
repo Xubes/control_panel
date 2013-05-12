@@ -11,14 +11,22 @@ int currentLevel = 1;
 int lastLR = 1;
 int potLims[7][2] = {{0,6},{10,16},{32,45},{64,100},{128,210},{256,460},{512,1024}};
 
+/* Vars for button. */
+int buttonPin = 3;
+
 /* Vars for serial comm. */
 String inputString = "";
 boolean inputComplete = false;
 
 void setup(){
+  // Setup serial
   Serial.begin(9600);
   inputString.reserve(128);
   
+  // setup reset button
+  pinMode(buttonPin,INPUT);
+  
+  // setup led
   for(int i=0; i<3; i++){
     pinMode(rgbPins[i],OUTPUT);
   }
@@ -33,14 +41,11 @@ void setup(){
 }
 
 void loop(){
-  if(false){
-    //Serial.println(inputString);
-    double* color = splitCodes(inputString);
-    setColor(color);
-    inputComplete = false;
-    inputString = "";
-  }
-
+  /* Check button. */
+  int bVal = digitalRead(buttonPin);
+  Serial.println("Button state: " + (String)bVal);
+  
+  /* Check pot. */
   int potVal = analogRead(potPin);
   int nlevel = getLevel(potVal);
   if(!(nlevel==currentLevel || nlevel==lastLR || nlevel==0)){
