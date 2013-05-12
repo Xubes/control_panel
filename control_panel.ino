@@ -9,7 +9,7 @@ double TEST[] = {1, 0, 0};
 #define potPin A0
 int currentLevel = 1;
 int lastLR = 1;
-int potLims[7][2] = {{0,6},{10,16},{32,45},{64,100},{128,210},{256,460},{512,1024}};
+int potLims[7][2] = {{0,3},{10,16},{32,45},{64,100},{128,210},{256,460},{512,1024}};
 
 /* Vars for button. */
 int buttonPin = 3;
@@ -30,6 +30,7 @@ void setup(){
   for(int i=0; i<3; i++){
     pinMode(rgbPins[i],OUTPUT);
   }
+  //test();
   setColor(TEST);
   delay(1000);
   setColor(GREEN);
@@ -43,7 +44,7 @@ void setup(){
 void loop(){
   /* Check button. */
   int bVal = digitalRead(buttonPin);
-  Serial.println("Button state: " + (String)bVal);
+  //Serial.println("Button state: " + (String)bVal); // Debug
   
   /* Check pot. */
   int potVal = analogRead(potPin);
