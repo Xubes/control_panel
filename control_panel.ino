@@ -9,10 +9,10 @@ double TEST[] = {1, 0, 0};
 #define potPin A0
 int currentLevel = 1;
 int lastLR = 1;
-int potLims[7][2] = {{0,3},{10,16},{32,45},{64,100},{128,210},{256,460},{512,1024}};
+int potLims[11][2] = {{500,530},{550,580},{600,630},{650,680},{700,730},{750,780},{800,830},{850,880},{900,930},{950,980},{1000,1024}};
 
 /* Vars for button. */
-int buttonPin = 3;
+int buttonPin=3;
 
 /* Vars for serial comm. */
 String inputString = "";
@@ -48,6 +48,7 @@ void loop(){
   
   /* Check pot. */
   int potVal = analogRead(potPin);
+  //Serial.println("Pot value :\t" + (String)potVal); //Debug
   int nlevel = getLevel(potVal);
   if(!(nlevel==currentLevel || nlevel==lastLR || nlevel==0)){
     setColor(BLUE);
@@ -70,7 +71,7 @@ void requestLevelChange(int nl){
 
 /* Maps the specified pot value to one of the dial levels. */
 int getLevel(int p){
-  for(int i=0; i<7; i++){
+  for(int i=0; i<11; i++){
     if(p>=potLims[i][0] && p<=potLims[i][1]){
       return i+1;
     }
