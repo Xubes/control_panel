@@ -66,7 +66,7 @@ void setColor(double* color){
 
 /* Sends request to change level. */
 void requestLevelChange(int nl){
-  Serial.println("Requesting level change to " + (String)nl);
+  Serial.println("dynos:" + (String)nl);
 }
 
 /* Maps the specified pot value to one of the dial levels. */
