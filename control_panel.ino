@@ -43,7 +43,7 @@ void setup(){
   pinMode(potPin,INPUT);
   currentLevel = getNearestLevel(analogRead(potPin));
   lastLR = currentLevel;
-  Serial.println("Current level :\t" + (String)currentLevel);
+  //Serial.println("Current level :\t" + (String)currentLevel);
    
 }
 
