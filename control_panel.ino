@@ -9,7 +9,7 @@ double TEST[] = {1, 0, 0};
 #define potPin A0
 int currentLevel = 1;
 int lastLR = 1;
-int potLims[11][2] = {{500,530},{550,580},{600,630},{650,680},{700,730},{750,780},{800,830},{850,880},{900,930},{950,980},{1000,1024}};
+int potLims[11][2] = {{500,510},{550,560},{600,610},{650,660},{700,710},{750,760},{800,810},{850,860},{900,910},{950,960},{1000,1024}};
 
 /* Vars for button. */
 int buttonPin=3;
@@ -36,7 +36,7 @@ void setup(){
   setColor(GREEN);
   
   pinMode(potPin,INPUT);
-  currentLevel = getLevel(analogRead(potPin));
+  currentLevel = getNearestLevel(analogRead(potPin));
   Serial.println("Current level :\t" + (String)currentLevel);
    
 }
@@ -77,6 +77,18 @@ int getLevel(int p){
     }
   }
   return 0;
+}
+
+/* Gets the nearest level to the pot value.
+    This is useful when we need to have a nonzero level. */
+int getNearestLevel(int p){
+  for(int i=0; i<11; i++){
+    if(p<potLims[i][1]){
+      level=i+1;
+      break;
+    }
+  }
+  return level;
 }
 
 /* Processes an input code. */
