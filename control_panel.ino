@@ -3,13 +3,13 @@ const int rgbPins[] = {9,10,11};
 double RED[] = {0, 1, 1};
 double GREEN[] = {1, 0, 1};
 double BLUE[] = {1, 1, 0};
-double TEST[] = {1, 1, 1};
+double TEST[] = {1, 0, 0};
 
 /* Vars for the dial */
 #define potPin A0
 int currentLevel = 1;
 int lastLR = 1;
-int potLims[] = {0,20,40,80,160,320,640,1280};
+int potLims[8] = {0,16,32,64,128,256,512,1024};
 
 /* Vars for serial comm. */
 String inputString = "";
@@ -22,15 +22,13 @@ void setup(){
   for(int i=0; i<3; i++){
     pinMode(rgbPins[i],OUTPUT);
   }
-  setColor(RED);
-  delay(1000);
-  setColor(BLUE);
+  setColor(TEST);
   delay(1000);
   setColor(GREEN);
-  delay(1000);
   
   pinMode(potPin,INPUT);
   currentLevel = getLevel(analogRead(potPin));
+  Serial.println("Current level :\t" + (String)currentLevel);
    
 }
 
@@ -63,18 +61,21 @@ void setColor(double* color){
 void requestLevelChange(int nl){
   Serial.println("Requesting level change to " + (String)nl);
 }
+
 /* Maps the specified pot value to one of the dial levels. */
 int getLevel(int p){
-  int idx=0;
-  while(p>potLims[idx] && idx<8){
-    idx++;
+  for(int i=1; i<8; i++){
+    if(p<=potLims[i]){
+      return i;
+    }
   }
-  return idx+1;
+  return 0;
 }
 
-/* Processes a request code. */
-void processRequest(String rs){
+/* Processes an input code. */
+void processIn(String rs){
   int code = str2Int(rs);
+  Serial.println("recieved code: " + String(code));
   if(code==lastLR){
     currentLevel = lastLR;
     setColor(GREEN);
@@ -94,7 +95,8 @@ void serialEvent() {
     //check if line is complete
     if(inChar=='\n'){
       inputComplete = true;
-      processRequest(inputString);
+      processIn(inputString);
+      inputString = "";
     }
     else{
       inputString += inChar;
@@ -102,7 +104,7 @@ void serialEvent() {
   }
 }
 
-// get the split strings
+// split a string into 3 doubles
 double* splitCodes(String s){
   double ret[3];
   int len = s.length();
