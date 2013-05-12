@@ -18,11 +18,13 @@ boolean buttonState = false;
 /* Vars for serial comm. */
 String inputString = "";
 boolean inputComplete = false;
+const int SERIAL_TIMEOUT = 100000;
 
 void setup(){
   // Setup serial
   Serial.begin(9600);
   inputString.reserve(128);
+  Serial.setTimeout(SERIAL_TIMEOUT);
   
   // setup reset button
   pinMode(buttonPin,INPUT);
@@ -43,12 +45,23 @@ void setup(){
    
 }
 
+/* Do our soft reset routine. */
+void myReset(){
+  setColor(TEST);
+  requestReset();
+  char buf[3];
+  Serial.readBytesUntil('\n',buf,3);
+  
+  
+}
+
+/* Main loop. */
 void loop(){
   /* Check button. */
   int bVal = digitalRead(buttonPin);
   //Serial.println("Button state: " + (String)bVal); // Debug
   if(bVal^buttonState){
-    Serial.println("Button state changed from: " + (String)buttonState + " -> " + (String)bval); //debug
+    Serial.println("Button state changed from: " + (String)buttonState + " -> " + (String)bVal); //debug
     buttonState = bVal;
   }
   
@@ -70,6 +83,10 @@ void setColor(double* color){
   }
 }
 
+/* Sends a request for reset. */
+void requestReset(){
+  Serial.println("Reset the server, brah.");
+}
 /* Sends request to change level. */
 void requestLevelChange(int nl){
   Serial.println("dynos:" + (String)nl);
@@ -101,15 +118,11 @@ int getNearestLevel(int p){
 /* Processes an input code. */
 void processIn(String rs){
   int code = str2Int(rs);
-  Serial.println("recieved code: " + String(code));
+  Serial.println("recieved code: " + String(code)); //debug
   if(code==lastLR){
     currentLevel = lastLR;
     setColor(GREEN);
     return;
-  }
-  switch(code){
-    default:
-      setColor(BLUE);
   }
 }
 /* Serial event to receive data from Serial Port. */
