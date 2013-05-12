@@ -50,14 +50,14 @@ void setup(){
 /* Do our soft reset routine. */
 void myReset(){
   setColor(RED);
-  int code = 0;
-  while(code!=100){
+  char code = '0';
+  while(code!='1'){
     requestReset();
     Serial.flush();
-    char buf[3];
-    Serial.readBytesUntil('\n',buf,3);
-    code=atoi(buf);
-    //Serial.println("Received code: " + (String)code); //debug
+    char buf[1];
+    Serial.readBytesUntil('\n',buf,1);
+    code=buf[1];
+    Serial.println("Received code: " + (String)code); //debug
   }
   //Serial.println("reset ok"); //debug
   resetNeeded = false;
