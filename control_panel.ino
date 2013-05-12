@@ -53,6 +53,7 @@ void myReset(){
   char code = '0';
   while(code!='1'){
     requestReset();
+    Serial.flush();
     char buf[1];
     Serial.readBytesUntil('\n',buf,1);
     code=buf[1];
