@@ -8,12 +8,13 @@ double TEST[] = {1, 0, 0};
 /* Vars for the dial */
 #define potPin A0
 int currentLevel = 1;
-int lastLR = 1;
+int lastLR = 0;
 int potLims[11][2] = {{500,510},{550,560},{600,610},{650,660},{700,710},{750,760},{800,810},{850,860},{900,910},{950,960},{1000,1024}};
 
 /* Vars for button. */
 int buttonPin=3;
 boolean buttonState = false;
+boolean resetNeeded = false;
 
 /* Vars for serial comm. */
 String inputString = "";
@@ -41,18 +42,25 @@ void setup(){
   
   pinMode(potPin,INPUT);
   currentLevel = getNearestLevel(analogRead(potPin));
+  lastLR = currentLevel;
   Serial.println("Current level :\t" + (String)currentLevel);
    
 }
 
 /* Do our soft reset routine. */
 void myReset(){
-  setColor(TEST);
-  requestReset();
-  char buf[3];
-  Serial.readBytesUntil('\n',buf,3);
-  
-  
+  setColor(RED);
+  int code = 0;
+  while(code!=100){
+    requestReset();
+    char buf[3];
+    Serial.readBytesUntil('\n',buf,3);
+    code=atoi(buf);
+    //Serial.println("Received code: " + (String)code); //debug
+  }
+  //Serial.println("reset ok"); //debug
+  resetNeeded = false;
+  setColor(GREEN);
 }
 
 /* Main loop. */
@@ -61,8 +69,15 @@ void loop(){
   int bVal = digitalRead(buttonPin);
   //Serial.println("Button state: " + (String)bVal); // Debug
   if(bVal^buttonState){
-    Serial.println("Button state changed from: " + (String)buttonState + " -> " + (String)bVal); //debug
+    //Serial.println("Button state changed from: " + (String)buttonState + " -> " + (String)bVal); //debug
     buttonState = bVal;
+    resetNeeded = !resetNeeded;
+  }
+  
+  /* Reset only if the requested level and current level are equal
+      i.e. last request was processed. */
+  if(resetNeeded && lastLR==currentLevel){
+    myReset();
   }
   
   /* Check pot. */
@@ -85,7 +100,7 @@ void setColor(double* color){
 
 /* Sends a request for reset. */
 void requestReset(){
-  Serial.println("Reset the server, brah.");
+  Serial.println("reset:1");
 }
 /* Sends request to change level. */
 void requestLevelChange(int nl){
