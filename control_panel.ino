@@ -4,7 +4,7 @@ double RED[] = {0, 1, 1};
 double GREEN[] = {1, 0, 1};
 double BLUE[] = {1, 1, 0};
 double TEST[] = {1, 0, 0};
-
+int MAX_ERRORS = 100;
 /* Vars for the dial */
 #define potPin A0
 int currentLevel = 1;
@@ -35,7 +35,6 @@ void setup(){
   for(int i=0; i<3; i++){
     pinMode(rgbPins[i],OUTPUT);
   }
-  //test();
   setColor(TEST);
   delay(1000);
   setColor(GREEN);
@@ -49,7 +48,7 @@ void setup(){
 
 /* Do our soft reset routine. */
 void myReset(){
-  setColor(RED);
+  setColor(TEST);
   int code = 0;
   while(code!=100){
     requestReset();
@@ -139,6 +138,23 @@ void processIn(String rs){
     currentLevel = lastLR;
     setColor(GREEN);
     return;
+  }
+  
+  if(code>=1000){
+    double val = 0.0;
+    val = double(code-1000)/double(MAX_ERRORS);
+    //Serial.println(val);//debug
+    if(val<0.0){
+      val=0.0;
+    }
+    else if(val>1.0){
+      val=1.0;
+    }
+    double ncolor[3];
+    ncolor[0] = 1.0-val;
+    ncolor[1] = val;
+    ncolor[2] = 1.0;
+    setColor(ncolor);
   }
 }
 /* Serial event to receive data from Serial Port. */
